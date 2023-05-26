@@ -2,7 +2,7 @@ name: helloworld-webapp
 on: 
   push:
     branches: 
-      - feature/tajuddin
+      - feature/taj
 jobs:
     python-setup:
       runs-on: ubuntu-latest
