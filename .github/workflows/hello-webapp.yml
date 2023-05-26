@@ -30,10 +30,13 @@ jobs:
         - name: repository-checkout
           uses: actions/checkout@v3
 
-        - name:
+        - name: installing flask 
           run: |
-            echo "settingup dev-environment"
+            pip install flask
+            python3 -c "import flask; print(flask.__version__)"
 
+        - name: settingup dev-environment
+          run: |
             # sudo apt install -y python3-venv
             # mkdir environments
             # cd environments
@@ -41,9 +44,8 @@ jobs:
             # source development/bin/activate
             # cd ..
 
-            pip install flask
-            python3 -c "import flask; print(flask.__version__)"
-
+        - name: Build
+          run: |
             python hello-world-webapp.py
 
             # export FLASK_APP=hello-world-webapp
