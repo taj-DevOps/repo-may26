@@ -52,6 +52,14 @@ jobs:
             # flask run
             echo "build is successfull"
 
+    artifacts-upload:
+        runs-on: ubuntu-latest
+        needs: Build
+
+        steps:
+        - name: repository-checkout
+          uses: actions/checkout@v3
+
         - name: 'creating path'
           run: |
             mkdir -p path/to/artifact
@@ -60,5 +68,5 @@ jobs:
         - name: 'Upload Artifact'
           uses: actions/upload-artifact@v3
           with:
-            name: my-new-artifact
+            name: new-artifact
             path: path/to/artifact/world.txt
