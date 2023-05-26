@@ -41,8 +41,8 @@ jobs:
             # source development/bin/activate
             # cd ..
 
-            # pip install flask
-            # python3 -c "import flask; print(flask.__version__)"
+            pip install flask
+            python3 -c "import flask; print(flask.__version__)"
 
             python hello-world-webapp.py
 
