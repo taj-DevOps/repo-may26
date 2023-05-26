@@ -48,4 +48,4 @@ jobs:
 
             # export FLASK_APP=hello-world-webapp
             # flask run
-            # echo "build is successfull"
+            echo "build is successfull"
