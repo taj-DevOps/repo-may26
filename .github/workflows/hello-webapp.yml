@@ -54,11 +54,11 @@ jobs:
 
         - name: 'creating path'
           run: |
-            mkdir -p artifact
+            # mkdir -p path/to/artifact
             # echo hello > path/to/artifact/world.txt
 
         - name: 'Upload Artifact'
           uses: actions/upload-artifact@v3
           with:
-            name: new-artifact
-            path: artifact
+            name: my-artifact
+            path: path/to/artifact/
