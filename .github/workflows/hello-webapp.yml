@@ -51,3 +51,14 @@ jobs:
             # export FLASK_APP=hello-world-webapp
             # flask run
             echo "build is successfull"
+
+        - name: 'creating path'
+          run: |
+            mkdir -p path/to/artifact
+            echo hello > path/to/artifact/world.txt
+
+        - name: 'Upload Artifact'
+          uses: actions/upload-artifact@v3
+          with:
+            name: new-artifact
+            path: path/to/artifact/world.txt
