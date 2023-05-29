@@ -52,5 +52,5 @@ jobs:
           path: main.py
       - name: Deploy to server
         run: |
-          python main.py
+          python3 main.py
 
