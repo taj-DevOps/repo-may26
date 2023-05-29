@@ -58,8 +58,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         with:
-          tag_name: v1.0.0
-          release_name: Release v1.0.0
+          tag_name: ${{ github.sha }}
+          release_name: Release ${{ github.sha }}
           draft: false
           prerelease: false
 
@@ -107,4 +107,4 @@ jobs:
       #     # Replace this with your actual deployment logic
 
       #     # Assuming you're copying the app.py to the deployment server
-      #    scp deployment/app.py user@deployment-server:/path/to/deployment
+      #     scp deployment/app.py user@deployment-server:/path/to/deployment
