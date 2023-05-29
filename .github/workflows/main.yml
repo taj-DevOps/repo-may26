@@ -30,3 +30,17 @@ jobs:
           # This workflow will only execute if a pull request is closed and merged into the main branch
           # python app.py
 
+
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v1.0.0  # Specify the tag name for the release
+          release_name: Release v1.0.0  # Specify the release name
+          draft: false
+          prerelease: false
+
+
+
