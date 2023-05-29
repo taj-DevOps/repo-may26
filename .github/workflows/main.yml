@@ -1,0 +1,32 @@
+name: assessment
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x  # Specify the desired Python version
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt  # Install your project's dependencies
+
+
+      - name: Run workflow only on merged PRs to main
+        if: ${{ github.event.pull_request.base.ref == 'main' && github.event.pull_request.merged == true }}
+        run: |
+          # This workflow will only execute if a pull request is closed and merged into the main branch
+          # python app.py
+
