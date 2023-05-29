@@ -28,7 +28,7 @@ jobs:
           # In this case, let's assume app.py is the main file to deploy
           # Copy or generate any other required files as well
           # Run your build command or script
-          python app.py
+          # python app.py
           # Copy app.py to a deployment directory
           mkdir deployment
           cp ./app.py deployment/app.py
