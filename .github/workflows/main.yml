@@ -107,5 +107,14 @@ jobs:
 
                 const release = releases[0];
                 const asset = release.assets.find(a => a.name === 'app.py');
-                const response = await octokit.repos.downloadReleaseAsset
+                const response = await octokit.repos.downloadReleaseAsset({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  asset_id: asset.id,
+                  headers: {
+                    Accept: 'application/octet-stream',
+                  },
+                });
+
+                fs.writeFileSync('deployment/app.py',
 
