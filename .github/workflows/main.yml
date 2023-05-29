@@ -48,24 +48,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Get latest release
-        id: latest_release
-        run: echo "::set-output name=latest_release::$(git describe --tags --abbrev=0)"
-
       - name: Determine new version
         id: new_version
         run: |
-          latest_release=${{ steps.latest_release.outputs.latest_release }}
-          if [[ -z "$latest_release" ]]; then
-            echo "::set-output name=new_version::v1.0.0"
-          else
-            semver=( ${latest_release//./ } )
-            major="${semver[0]}"
-            minor="${semver[1]}"
-            patch="${semver[2]}"
-            new_patch=$((patch + 1))
-            echo "::set-output name=new_version::v${major}.${minor}.${new_patch}"
-          fi
+          timestamp=$(date +%Y%m%d%H%M%S)
+          echo "::set-output name=new_version::v1.0.0-${timestamp}"
 
       - name: Create release
         id: create_release
