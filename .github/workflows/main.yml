@@ -41,11 +41,11 @@ jobs:
     runs-on: self-hosted
     needs: artifacts
     steps:
-      uses: actions/checkout@v2
+      - uses: actions/checkout@v2
       # - uses: actions/download-artifact@v2
       #   with:
       #     name: my-artifact
       #     path: main.py
       - name: Deploy to server
         run: |
-          python main.py
+          python3 main.py
