@@ -48,4 +48,4 @@ jobs:
       #     path: main.py
       - name: Deploy to server
         run: |
-          python3 app.py
+          # python3 app.py
