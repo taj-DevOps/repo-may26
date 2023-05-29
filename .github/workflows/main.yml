@@ -24,7 +24,6 @@ jobs:
       - name: Build artifacts
         run: |
           # Build your artifacts here
-          # For example, you can run any build commands or generate the necessary files
           # In this case, let's assume app.py is the main file to deploy
           # Copy or generate any other required files as well
           # Run your build command or script
