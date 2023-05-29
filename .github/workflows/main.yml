@@ -78,27 +78,27 @@ jobs:
     needs: release
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Download release asset
-        run: |
-          asset_url=$(curl -s "https://api.github.com/repos/${{ github.repository }}/releases/tags/v1.0.0" -H "Authorization: Bearer ${{ secrets.PAT_TOKEN }}" | jq -r '.assets[] | select(.name == "app.py").browser_download_url')
-          curl -sLJO -H "Authorization: Bearer ${{ secrets.PAT_TOKEN }}" "$asset_url"
-
     # steps:
     #   - name: Checkout code
     #     uses: actions/checkout@v2
 
     #   - name: Download release asset
-    #     uses: actions/download-release-asset@v1
-    #     env:
-    #       GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
-    #     with:
-    #       repository: ${{ github.repository }}
-    #       asset_path: deployment/app.py
-    #       asset_name: app.py
+    #     run: |
+    #       asset_url=$(curl -s "https://api.github.com/repos/${{ github.repository }}/releases/tags/v1.0.0" -H "Authorization: Bearer ${{ secrets.PAT_TOKEN }}" | jq -r '.assets[] | select(.name == "app.py").browser_download_url')
+    #       curl -sLJO -H "Authorization: Bearer ${{ secrets.PAT_TOKEN }}" "$asset_url"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Download release asset
+        uses: actions/download-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+        with:
+          repository: ${{ github.repository }}
+          asset_path: deployment/app.py
+          asset_name: app.py
 
       # - name: Deploy application
       #   run: |
@@ -107,4 +107,4 @@ jobs:
       #     # Replace this with your actual deployment logic
 
       #     # Assuming you're copying the app.py to the deployment server
-      #   scp deployment/app.py user@deployment-server:/path/to/deployment
+      #     scp deployment/app.py user@deployment-server:/path/to/deployment
