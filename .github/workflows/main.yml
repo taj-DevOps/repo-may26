@@ -32,7 +32,7 @@ jobs:
 
           # Copy app.py to a deployment directory
           mkdir deployment
-          cp app.py deployment/app.py
+          cp ./app.py deployment/app.py
 
       - name: Archive artifacts
         uses: actions/upload-artifact@v2
