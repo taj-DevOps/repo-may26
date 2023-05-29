@@ -42,7 +42,7 @@ jobs:
           path: app.py
 
   deploy:
-    runs-on: self-hosted runner
+    runs-on: self-hosted
     needs: artifacts
     steps:
       - uses: actions/checkout@v2
