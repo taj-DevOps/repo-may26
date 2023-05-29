@@ -97,10 +97,22 @@ jobs:
 
             async function downloadReleaseAsset() {
               try {
-                const response = await github.repos.getReleaseAsset({
+                const { data: releases } = await github.repos.listReleases({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
-                  asset_id: context.payload.release.assets[0].id,
+                  per_page: 1,
+                });
+
+                const release = releases[0];
+                const asset = release.assets.find(a => a.name === 'app.py');
+
+                const response = await github.repos.downloadReleaseAsset({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  asset_id: asset.id,
+                  headers: {
+                    Accept: 'application/octet-stream',
+                  },
                 });
 
                 fs.writeFileSync('deployment/app.py', response.data);
