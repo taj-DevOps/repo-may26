@@ -24,6 +24,7 @@ jobs:
       - name: Build artifacts
         run: |
           # Build your artifacts here
+          # For example, you can run any build commands or generate the necessary files
           # In this case, let's assume app.py is the main file to deploy
           # Copy or generate any other required files as well
           # Run your build command or script
@@ -31,6 +32,7 @@ jobs:
           # Copy app.py to a deployment directory
           mkdir deployment
           cp ./app.py deployment/app.py
+
       - name: Archive artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -50,6 +52,7 @@ jobs:
         run: |
           timestamp=$(date +%Y%m%d%H%M%S)
           echo "::set-output name=new_version::v1.0.0-${timestamp}"
+
       - name: Download artifact
         uses: actions/download-artifact@v2
         with:
@@ -78,7 +81,6 @@ jobs:
           asset_name: app.py
           asset_content_type: text/x-python
 
-
   deploy:
     needs: release
     runs-on: ubuntu-latest
@@ -88,6 +90,22 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Download release asset
-        uses: actions/download-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const fs = require('fs');
+            const { Octokit } = require('@octokit/rest');
+            const octokit = new Octokit();
+            
+            async function downloadReleaseAsset() {
+              try {
+                const { data: releases } = await octokit.repos.listReleases({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  per_page: 1,
+                });
+
+                const release = releases[0];
+                const asset = release.assets.find(a => a.name === 'app.py');
+                const response = await octokit.repos.downloadReleaseAsset
+
