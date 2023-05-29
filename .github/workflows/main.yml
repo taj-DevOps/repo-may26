@@ -28,12 +28,10 @@ jobs:
           # In this case, let's assume app.py is the main file to deploy
           # Copy or generate any other required files as well
           # Run your build command or script
-          # python app.py
-
+          python app.py
           # Copy app.py to a deployment directory
           mkdir deployment
           cp ./app.py deployment/app.py
-
       - name: Archive artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -53,6 +51,11 @@ jobs:
         run: |
           timestamp=$(date +%Y%m%d%H%M%S)
           echo "::set-output name=new_version::v1.0.0-${timestamp}"
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: my-artifacts
+          path: deployment
 
       - name: Create release
         id: create_release
@@ -75,6 +78,7 @@ jobs:
           asset_path: deployment/app.py
           asset_name: app.py
           asset_content_type: text/x-python
+
 
   deploy:
     needs: release
