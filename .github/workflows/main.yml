@@ -96,7 +96,7 @@ jobs:
             const fs = require('fs');
             const { Octokit } = require('@octokit/rest');
             const octokit = new Octokit();
-            
+
             async function downloadReleaseAsset() {
               try {
                 const { data: releases } = await octokit.repos.listReleases({
@@ -116,5 +116,12 @@ jobs:
                   },
                 });
 
-                fs.writeFileSync('deployment/app.py',
+                fs.writeFileSync('deployment/app.py', response.data);
+              } catch (error) {
+                console.error(error);
+                process.exit(1);
+              }
+            }
+
+            downloadReleaseAsset();
 
