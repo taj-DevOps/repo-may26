@@ -39,7 +39,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: my-artifact
-          path: app.py
+          path: main.py
 
   deploy:
     runs-on: self-hosted
@@ -49,8 +49,8 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: my-artifact
-          path: app.py
+          path: main.py
       - name: Deploy to server
         run: |
-          python app.py
+          python main.py
 
