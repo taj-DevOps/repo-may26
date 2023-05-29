@@ -28,8 +28,8 @@ jobs:
           # In this case, let's assume app.py is the main file to deploy
           # Copy or generate any other required files as well
           # Run your build command or script
-          # python app.py
-          
+          python build.py
+
           # Copy app.py to a deployment directory
           mkdir deployment
           cp app.py deployment/app.py
@@ -44,50 +44,50 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Get latest release
-        id: latest_release
-        run: echo "::set-output name=latest_release::$(git describe --tags --abbrev=0)"
+    - name: Get latest release
+      id: latest_release
+      run: echo "::set-output name=latest_release::$(git describe --tags --abbrev=0)"
 
-      - name: Determine new version
-        id: new_version
-        run: |
-          latest_release=${{ steps.latest_release.outputs.latest_release }}
-          if [[ -z "$latest_release" ]]; then
-            echo "::set-output name=new_version::v1.0.0"
-          else
-            semver=( ${latest_release//./ } )
-            major="${semver[0]}"
-            minor="${semver[1]}"
-            patch="${semver[2]}"
-            new_patch=$((patch + 1))
-            echo "::set-output name=new_version::v${major}.${minor}.${new_patch}"
-          fi
+    - name: Determine new version
+      id: new_version
+      run: |
+        latest_release=${{ steps.latest_release.outputs.latest_release }}
+        if [[ -z "$latest_release" ]]; then
+          echo "::set-output name=new_version::v1.0.0"
+        else
+          semver=( ${latest_release//./ } )
+          major="${semver[0]}"
+          minor="${semver[1]}"
+          patch="${semver[2]}"
+          new_patch=$((patch + 1))
+          echo "::set-output name=new_version::v${major}.${minor}.${new_patch}"
+        fi
 
-      - name: Create release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
-        with:
-          tag_name: ${{ steps.new_version.outputs.new_version }}
-          release_name: Release ${{ steps.new_version.outputs.new_version }}
-          draft: false
-          prerelease: false
+    - name: Create release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+      with:
+        tag_name: ${{ steps.new_version.outputs.new_version }}
+        release_name: Release ${{ steps.new_version.outputs.new_version }}
+        draft: false
+        prerelease: false
 
-      - name: Upload release asset
-        id: upload_asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: deployment/app.py
-          asset_name: app.py
-          asset_content_type: text/x-python
+    - name: Upload release asset
+      id: upload_asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: deployment/app.py
+        asset_name: app.py
+        asset_content_type: text/x-python
 
   deploy:
     needs: release
