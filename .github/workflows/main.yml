@@ -49,7 +49,7 @@ jobs:
       - name: Determine last release version
         id: last_release
         run: |
-          last_version=$(git describe --abbrev=0 --tags)
+          last_version=$(git describe --abbrev=0 --tags 2>/dev/null || echo "v0.0.0")
           echo "::set-output name=last_version::${last_version#v}"
 
       - name: Determine new version
