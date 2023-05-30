@@ -94,16 +94,24 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            
-            async function downloadReleaseAsset() {
+            const releaseId = context.payload.release.id;
+          
+             async function downloadReleaseAsset() {
               try {
-                const { data: release } = await github.repos.getReleaseAsset({
+                const { data: releaseAssets } = await github.repos.listReleaseAssets({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
-                  asset_id: context.payload.release.assets[0].id,
+                  release_id: releaseId,
                 });
               
-                fs.writeFileSync('deployment/app.py', release);
+                const asset = releaseAssets.find(a => a.name === 'app.py');
+                const response = await github.repos.getReleaseAsset({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  asset_id: asset.id,
+                });
+              
+                fs.writeFileSync('deployment/app.py', response.data);
               } catch (error) {
                 console.error(error);
                 process.exit(1);
