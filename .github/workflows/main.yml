@@ -27,7 +27,7 @@ jobs:
           # For example, you can run any build commands or generate the necessary files
           # In this case, let's assume app.py is the main file to deploy
           # Copy or generate any other required files as well
-          # Run your build command or script.
+          # Run your build command or script
           # python app.py
           # Copy app.py to a deployment directory
           mkdir deployment
@@ -46,14 +46,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Determine last release version
+        id: last_release
+        run: |
+          last_version=$(git describe --abbrev=0 --tags)
+          echo "::set-output name=last_version::${last_version#v}"
+
       - name: Determine new version
         id: new_version
         run: |
-          version=$(git tag --sort=-version:refname | head -n 1)
-          version_number=${version#v}
-          version_suffix=$(echo $version_number + 0.01 | bc)
-          new_version="v${version_suffix}"
-          echo "::set-output name=new_version::$new_version"
+          last_version=${{ steps.last_release.outputs.last_version }}
+          major=${last_version%%.*}
+          minor=${last_version#*.}
+          ((minor++))
+          echo "::set-output name=new_version::v${major}.${minor}"
 
       - name: Download artifact
         uses: actions/download-artifact@v2
