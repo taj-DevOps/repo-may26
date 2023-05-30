@@ -23,10 +23,6 @@ jobs:
 
       - name: Build artifacts
         run: |
-          # Build your artifacts here
-          # For example, you can run any build commands or generate the necessary files
-          # In this case, let's assume app.py is the main file to deploy
-          # Copy or generate any other required files as well
           # Run your build command or script
           # python app.py
           # Copy app.py to a deployment directory
@@ -47,26 +43,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Determine last release version
-        id: last_release
-        run: |
-          last_version=$(git describe --abbrev=0 --tags)
-          echo "::set-output name=last_version::$last_version"
-
       - name: Determine new version
         id: new_version
         run: |
-          last_version=${{ steps.last_release.outputs.last_version }}
-          IFS='.' read -r major minor <<< "$last_version"
-          ((minor++))
-          new_version="$major.$minor"
+          last_version=$(git describe --tags --abbrev=0 2>/dev/null)
+          echo "Last version: $last_version"  # Debugging information
+          if [ -z "$last_version" ]; then
+            last_version="v0.0.0"
+          fi
+          echo "Using version: $last_version"  # Debugging information
+          version_parts=(${last_version//./ })
+          major=${version_parts[0]}
+          minor=${version_parts[1]}
+          patch=${version_parts[2]}
+          ((patch++))
+          new_version="${major}.${minor}.${patch}"
+          echo "New version: $new_version"  # Debugging information
           echo "::set-output name=new_version::$new_version"
-
-      - name: Download artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: my-artifacts
-          path: deployment
+        shell: bash
 
       - name: Create release
         id: create_release
@@ -132,4 +126,3 @@ jobs:
               }
             }
             downloadReleaseAsset();
-
