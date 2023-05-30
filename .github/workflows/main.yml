@@ -81,33 +81,33 @@ jobs:
           asset_name: app.py
           asset_content_type: text/x-python
 
-deploy:
-  needs: release
-  runs-on: ubuntu-latest
+  deploy:
+    needs: release
+    runs-on: ubuntu-latest
 
-  steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Download release asset
-      uses: actions/github-script@v4
-      with:
-        script: |
-          const fs = require('fs');
-          
-          async function downloadReleaseAsset() {
-            try {
-              const { data: release } = await github.repos.getReleaseAsset({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                asset_id: context.payload.release.assets[0].id,
-              });
+      - name: Download release asset
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const fs = require('fs');
+            
+            async function downloadReleaseAsset() {
+              try {
+                const { data: release } = await github.repos.getReleaseAsset({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  asset_id: context.payload.release.assets[0].id,
+                });
               
-              fs.writeFileSync('deployment/app.py', release);
-            } catch (error) {
-              console.error(error);
-              process.exit(1);
+                fs.writeFileSync('deployment/app.py', release);
+              } catch (error) {
+                console.error(error);
+                process.exit(1);
+              }
             }
-          }
           
-          downloadReleaseAsset();
+            downloadReleaseAsset();
