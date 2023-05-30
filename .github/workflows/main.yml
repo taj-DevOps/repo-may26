@@ -49,7 +49,7 @@ jobs:
       - name: Determine last release version
         id: last_release
         run: |
-          echo "last_version=0.0" >> $GITHUB_ENV
+          echo "last_version=1.0.0" >> $GITHUB_ENV
 
       - name: Determine new version
         id: new_version
