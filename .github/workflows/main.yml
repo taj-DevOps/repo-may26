@@ -56,9 +56,13 @@ jobs:
         id: new_version
         run: |
           last_version=${{ steps.last_release.outputs.last_version }}
-          IFS='.' read -r major minor <<< "$last_version"
-          ((minor++))
-          new_version="$major.$minor"
+          if [[ $last_version == "1.0.0" ]]; then
+            new_version="0.0"
+          else
+            IFS='.' read -r major minor <<< "$last_version"
+            ((minor++))
+            new_version="$major.$minor"
+          fi
           echo "::set-output name=new_version::$new_version"
 
       - name: Download artifact
