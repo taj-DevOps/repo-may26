@@ -94,6 +94,7 @@ jobs:
         with:
           script: |
             const fs = require('fs');
+            const path = require('path');
 
             async function downloadReleaseAsset() {
               try {
@@ -117,7 +118,9 @@ jobs:
                   asset_id: asset.id,
                 });
 
-                fs.writeFileSync('deployment/app.py', response.data);
+                const deploymentPath = path.join(__dirname, 'deployment');
+                fs.mkdirSync(deploymentPath, { recursive: true });
+                fs.writeFileSync(path.join(deploymentPath, 'app.py'), response.data);
               } catch (error) {
                 console.error(error);
                 process.exit(1);
