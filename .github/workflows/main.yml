@@ -118,7 +118,7 @@ jobs:
                   asset_id: asset.id,
                 });
 
-                const deploymentPath = path.join(__dirname, 'deployment');
+                const deploymentPath = path.join(process.env.GITHUB_WORKSPACE, 'deployment');
                 fs.mkdirSync(deploymentPath, { recursive: true });
                 fs.writeFileSync(path.join(deploymentPath, 'app.py'), response.data);
               } catch (error) {
