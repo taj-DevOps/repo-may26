@@ -49,13 +49,12 @@ jobs:
       - name: Determine last release version
         id: last_release
         run: |
-          last_version=$(git describe --abbrev=0 --tags 2>/dev/null || echo "0.0")
-          echo "::set-output name=last_version::${last_version}"
+          echo "last_version=0.0" >> $GITHUB_ENV
 
       - name: Determine new version
         id: new_version
         run: |
-          last_version=${{ steps.last_release.outputs.last_version }}
+          last_version=$LAST_VERSION
           IFS='.' read -r major minor <<< "$last_version"
           ((minor++))
           new_version="$major.$minor"
