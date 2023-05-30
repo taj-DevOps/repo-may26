@@ -32,6 +32,7 @@ jobs:
           # Copy app.py to a deployment directory
           mkdir deployment
           cp ./app.py deployment/app.py
+
       - name: Archive artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -49,8 +50,8 @@ jobs:
       - name: Determine last release version
         id: last_release
         run: |
-          echo "last_version=1.0.0" >> $GITHUB_ENV
-          echo "::set-output name=last_version::1.0.0"
+          last_version=$(git describe --abbrev=0 --tags)
+          echo "::set-output name=last_version::$last_version"
 
       - name: Determine new version
         id: new_version
@@ -77,7 +78,6 @@ jobs:
           release_name: Release ${{ steps.new_version.outputs.new_version }}
           draft: false
           prerelease: false
-
 
       - name: Upload release asset
         id: upload_asset
@@ -132,3 +132,4 @@ jobs:
               }
             }
             downloadReleaseAsset();
+
