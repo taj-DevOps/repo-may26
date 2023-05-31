@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: [self-hosted, runner-1]
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
@@ -33,7 +33,7 @@ jobs:
 
   release:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, runner-1]
 
     steps:
       - name: Checkout code
