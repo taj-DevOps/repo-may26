@@ -33,7 +33,7 @@ jobs:
 
   release:
     needs: build
-    runs-on: [self-hosted, runner-1]
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
