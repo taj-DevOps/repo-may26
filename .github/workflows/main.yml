@@ -1,3 +1,5 @@
+name: Build and deployement
+
 on:
   push:
     branches:
