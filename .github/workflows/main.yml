@@ -1,13 +1,13 @@
 name: Build and deployement
 
 on:
-  pull_request:
-    types:
-      - closed
+  push:
+    branches:
+      - feature/taj
 
 jobs:
   build:
-    runs-on: [self-hosted, runner-1]
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
@@ -33,7 +33,7 @@ jobs:
 
   release:
     needs: build
-    runs-on: [self-hosted, runner-1]
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
@@ -42,25 +42,23 @@ jobs:
       - name: Determine last release version
         id: last_release
         run: |
-          last_version=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
+          response=$(curl --request GET --url https://api.github.com/repos/${{ github.repository }}/releases/latest)
+          last_version=$(echo "$response" | jq -r '.tag_name')
+          if [[ -z "$last_version" || "$last_version" == "null" ]]; then
+            last_version="v1.0.0"
+          fi
           echo "::set-output name=last_version::$last_version"
-
       - name: Determine new version
         id: new_version
         run: |
           last_version=${{ steps.last_release.outputs.last_version }}
-          if [[ $last_version == "v1.0.0" ]]; then
-            new_version="v1.0.0"
-          else
-            version_parts=($(echo "$last_version" | tr -d 'v' | tr '.' ' '))
-            major=${version_parts[0]}
-            minor=${version_parts[1]}
-            patch=$((version_parts[2]+1))
-            new_version="v${major}.${minor}.${patch}"
-          fi
-          timestamp=$(date +%Y%m%d%H%M%S)
-          echo "::set-output name=new_version::$new_version"-${timestamp}
-
+          IFS='.' read -ra version_parts <<< "$last_version"
+          major=${version_parts[0]}
+          minor=${version_parts[1]}
+          patch=${version_parts[2]}
+          patch=$((patch+1))
+          new_version="${major}.${minor}.${patch}"
+          echo "::set-output name=new_version::$new_version"
       - name: Download artifact
         uses: actions/download-artifact@v2
         with:
@@ -77,6 +75,7 @@ jobs:
           release_name: Release ${{ steps.new_version.outputs.new_version }}
           draft: false
           prerelease: false
+
       - name: Upload release asset
         id: upload_asset
         uses: actions/upload-release-asset@v1
@@ -90,7 +89,7 @@ jobs:
 
   deploy:
     needs: release
-    runs-on: [self-hosted, runner-2]
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
