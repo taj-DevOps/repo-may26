@@ -1,4 +1,4 @@
-name: assessment
+name: Build and deployement
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted[runner-1]
 
     steps:
       - name: Checkout code
@@ -23,12 +23,8 @@ jobs:
 
       - name: Build artifacts
         run: |
-          # Run your build command or script
-          # python app.py
-          # Copy app.py to a deployment directory
           mkdir deployment
           cp ./app.py deployment/app.py
-
       - name: Archive artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -37,30 +33,39 @@ jobs:
 
   release:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: self-hosted[runner-1]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Determine last release version
+        id: last_release
+        run: |
+          last_version=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
+          echo "::set-output name=last_version::$last_version"
+
       - name: Determine new version
         id: new_version
         run: |
-          last_version=$(git describe --tags --abbrev=0 2>/dev/null)
-          echo "Last version: $last_version"  # Debugging information
-          if [ -z "$last_version" ]; then
-            last_version="v0.0.0"
+          last_version=${{ steps.last_release.outputs.last_version }}
+          if [[ $last_version == "v1.0.0" ]]; then
+            new_version="v1.0.0"
+          else
+            version_parts=($(echo "$last_version" | tr -d 'v' | tr '.' ' '))
+            major=${version_parts[0]}
+            minor=${version_parts[1]}
+            patch=$((version_parts[2]+1))
+            new_version="v${major}.${minor}.${patch}"
           fi
-          echo "Using version: $last_version"  # Debugging information
-          version_parts=(${last_version//./ })
-          major=${version_parts[0]}
-          minor=${version_parts[1]}
-          patch=${version_parts[2]}
-          ((patch++))
-          new_version="${major}.${minor}.${patch}"
-          echo "New version: $new_version"  # Debugging information
-          echo "::set-output name=new_version::$new_version"
-        shell: bash
+          timestamp=$(date +%Y%m%d%H%M%S)
+          echo "::set-output name=new_version::$new_version"-${timestamp}
+
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: my-artifacts
+          path: deployment
 
       - name: Create release
         id: create_release
@@ -72,7 +77,6 @@ jobs:
           release_name: Release ${{ steps.new_version.outputs.new_version }}
           draft: false
           prerelease: false
-
       - name: Upload release asset
         id: upload_asset
         uses: actions/upload-release-asset@v1
@@ -86,7 +90,7 @@ jobs:
 
   deploy:
     needs: release
-    runs-on: ubuntu-latest
+    runs-on: self-hosted[runner-2]
 
     steps:
       - name: Checkout code
@@ -125,4 +129,4 @@ jobs:
                 process.exit(1);
               }
             }
-            downloadReleaseAsset();
+            downloadReleaseAsset(); 
