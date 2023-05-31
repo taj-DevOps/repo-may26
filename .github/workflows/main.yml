@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: self-hosted[runner-1]
+    runs-on: [self-hosted, runner-1]
 
     steps:
       - name: Checkout code
@@ -33,7 +33,7 @@ jobs:
 
   release:
     needs: build
-    runs-on: self-hosted[runner-1]
+    runs-on: [self-hosted, runner-1]
 
     steps:
       - name: Checkout code
@@ -90,7 +90,7 @@ jobs:
 
   deploy:
     needs: release
-    runs-on: self-hosted[runner-2]
+    runs-on: [self-hosted, runner-1]
 
     steps:
       - name: Checkout code
