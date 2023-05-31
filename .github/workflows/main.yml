@@ -90,7 +90,7 @@ jobs:
 
   deploy:
     needs: release
-    runs-on: [self-hosted, runner-1]
+    runs-on: [self-hosted, runner-2]
 
     steps:
       - name: Checkout code
